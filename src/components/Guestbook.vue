@@ -9,6 +9,7 @@ const adminPassword = '123456' // 改为你的密码
 const passwordInput = ref('')
 const loading = ref(true)
 const isShowAdminView = ref(false)
+const isAdmin = ref(false)
 
 // 获取留言
 const fetchMessages = async () => {
@@ -55,9 +56,9 @@ onMounted(fetchMessages)
 
     <!-- 留言表单 -->
     <div class="message-form">
-      <label for="name">您的名字</label>
+      <label>您的名字</label>
       <input v-model="newMessage.name" placeholder="" required />
-      <label for="content">留言内容</label>
+      <label>留言内容</label>
       <textarea v-model="newMessage.content" placeholder="" required rows="3"></textarea>
       <button @click="submitMessage">提交新留言</button>
     </div>
@@ -85,7 +86,7 @@ onMounted(fetchMessages)
         <button @click="isShowAdminView = true">管理员登录</button>
       </div>
       <div v-else>
-        <div class="admin-login">
+        <div class="admin-login" v-if="!isAdmin">
           <input v-model="passwordInput" type="password" placeholder="输入管理员密码" />
           <button @click="handleAdminLogin">登录</button>
         </div>
@@ -164,25 +165,6 @@ textarea {
   min-height: 100px;
 }
 
-.admin-section {
-  display: flex;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  padding: 15px;
-  justify-content: center; /* 新增：水平居中 */
-  align-items: center; /* 新增：垂直居中 */
-}
-
-.admin-section button {
-  align-self: center;
-}
-
-.admin-login {
-  display: flex;
-}
-
 button {
   background: #45a049;
   color: white;
@@ -194,7 +176,7 @@ button {
 }
 
 button:hover {
-  background: #2980b9;
+  background: #45a049;
 }
 
 .delete-btn {
@@ -235,6 +217,26 @@ button:hover {
 
 /* 管理员区域 */
 .admin-section {
+  display: flex;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 15px;
+  justify-content: center; /* 新增：水平居中 */
+  align-items: center; /* 新增：垂直居中 */
+}
+
+.admin-login {
+  display: flex;
+  gap: 10px; /* 替代margin间距 */
   background: #f8f9fa;
+  align-items: center;
+  height: 50px; /* 明确容器高度（示例） */
+}
+
+.admin-login input {
+  flex: 1; /* 输入框占据剩余空间 */
+  margin-bottom: 0px;
 }
 </style>

@@ -1,14 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getMessages, addMessage, deleteMessage } from '../utils/airtable'
+import { onMounted, ref } from 'vue'
+import { addMessage, deleteMessage, getMessages } from '../utils/airtable'
 
 // 状态管理
 const messages = ref([])
 const newMessage = ref({ name: '', content: '' })
-const isAdmin = ref(false)
 const adminPassword = '123456' // 改为你的密码
 const passwordInput = ref('')
 const loading = ref(true)
+const isShowAdminView = ref(false)
 
 // 获取留言
 const fetchMessages = async () => {
@@ -50,21 +50,21 @@ onMounted(fetchMessages)
 <template>
   <div class="container">
     <header>
-      <h1>留言板</h1>
-      <p>分享你的想法</p>
+      <h1>在线留言板</h1>
     </header>
 
     <!-- 留言表单 -->
     <div class="message-form">
-      <h2>留下你的留言</h2>
-      <input v-model="newMessage.name" placeholder="你的名字" required />
-      <textarea v-model="newMessage.content" placeholder="留言内容..." required rows="3"></textarea>
-      <button @click="submitMessage">提交</button>
+      <label for="name">您的名字</label>
+      <input v-model="newMessage.name" placeholder="" required />
+      <label for="content">留言内容</label>
+      <textarea v-model="newMessage.content" placeholder="" required rows="3"></textarea>
+      <button @click="submitMessage">提交新留言</button>
     </div>
 
     <!-- 留言列表 -->
     <div class="message-list">
-      <h2>所有留言</h2>
+      <h2>留言列表</h2>
       <div v-if="loading">加载中...</div>
       <div v-else-if="messages.length === 0">暂无留言</div>
       <div v-else class="messages">
@@ -81,14 +81,14 @@ onMounted(fetchMessages)
 
     <!-- 管理员登录 -->
     <div class="admin-section">
-      <h2>管理员</h2>
-      <div v-if="!isAdmin">
-        <input v-model="passwordInput" type="password" placeholder="输入管理员密码" />
-        <button @click="handleAdminLogin">登录</button>
+      <div v-if="!isShowAdminView">
+        <button @click="isShowAdminView = true">管理员登录</button>
       </div>
       <div v-else>
-        <p>管理员已登录</p>
-        <button @click="isAdmin = false">退出</button>
+        <div class="admin-login">
+          <input v-model="passwordInput" type="password" placeholder="输入管理员密码" />
+          <button @click="handleAdminLogin">登录</button>
+        </div>
       </div>
     </div>
   </div>
@@ -123,8 +123,7 @@ header h1 {
 
 /* 表单样式 */
 .message-form,
-.message-list,
-.admin-section {
+.message-list {
   background: white;
   padding: 20px;
   border-radius: 8px;
@@ -133,12 +132,19 @@ header h1 {
 }
 
 .message-form h2,
-.message-list h2,
-.admin-section h2 {
+.message-list h2 {
   margin-top: 0;
   color: #2c3e50;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+}
+
+.message-form label,
+.message-list label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
 }
 
 input,
@@ -146,17 +152,39 @@ textarea {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
+  margin-right: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  max-width: 100%;
   font-size: 16px;
+  box-sizing: border-box; /* 关键属性：让宽度包含padding和border */
 }
 
 textarea {
   min-height: 100px;
 }
 
+.admin-section {
+  display: flex;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 15px;
+  justify-content: center; /* 新增：水平居中 */
+  align-items: center; /* 新增：垂直居中 */
+}
+
+.admin-section button {
+  align-self: center;
+}
+
+.admin-login {
+  display: flex;
+}
+
 button {
-  background: #3498db;
+  background: #45a049;
   color: white;
   border: none;
   padding: 10px 15px;
